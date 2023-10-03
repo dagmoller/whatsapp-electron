@@ -1,0 +1,29 @@
+{
+  "name": "whatsapp-electron",
+  "version": "1.0.1",
+  "description": "DagMoller's WhatsApp Electron App",
+  "main": "./src/index.js",
+  "scripts": {
+    "start": "electron ./src",
+    "pack": "electron-builder --dir"
+  },
+  "author": "Diego Aguirre (DagMoller)",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^26.2.4",
+    "electron-builder": "^24.6.4"
+  },
+  "dependencies": {
+    "electron-is-dev": "^2.0.0",
+    "electron-store": "^8.1.0",
+    "sharp": "^0.32.6"
+  },
+  "build": {
+    "linux": {
+      "asarUnpack": [
+        "**/node_modules/sharp/**",
+        "**/assets/*.svg"
+      ]
+    }
+  }
+}
