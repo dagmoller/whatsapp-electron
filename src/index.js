@@ -1,12 +1,13 @@
 const { app, BrowserWindow, ipcMain, Menu, Tray, nativeImage } = require('electron')
 const Store = require('electron-store');
-const sharp = require('sharp')
+const { createCanvas, loadImage } = require('@napi-rs/canvas')
 const path = require('node:path')
 const isDev = require('electron-is-dev');
 
 const store = new Store();
 
-const baseIcon = isDev ? path.join(__dirname, "../assets/whatsapp-icon-512x512.svg") : path.join(process.resourcesPath, "app.asar.unpacked/assets/whatsapp-icon-512x512.svg");
+const baseIcon = isDev ? path.join(__dirname, "../assets/whatsapp-icon-512x512.png") : path.join(process.resourcesPath, "app.asar.unpacked/assets/whatsapp-icon-512x512.png");
+let   baseIconImage = null;
 
 let window;
 let tray;
@@ -30,7 +31,8 @@ const createWindow = () => {
 			contextIsolation: false,
 			preload: path.join(__dirname, "preload.js")
 		},
-		autoHideMenuBar: true
+		autoHideMenuBar: true,
+		icon: baseIcon
 	}
 	if (bounds.x != null)
 	{
@@ -41,7 +43,7 @@ const createWindow = () => {
 	window = new BrowserWindow(options);
 
 	ipcMain.on("update-unread-messages", (event, unread) => {
-		//console.log("Unread Messages: ", unread);
+		console.log("Unread Messages: ", unread);
 		updateTrayCounter(unread);
 	})
 
@@ -101,48 +103,58 @@ const showHideApp = (hide = true) => {
 }
 
 const createTrayIcon = async () => {
-	const icon = await sharp(baseIcon).png().resize(128,128).toBuffer();
 	const menu = Menu.buildFromTemplate([
 		{label: "Show/Hide", click: showHideApp},
 		{type: "separator"},
 		{label: "Quit", click: () => { isQuit = true; app.quit(); }}
 	]);
-	tray = new Tray(nativeImage.createFromBuffer(icon));
+	tray = new Tray(baseIcon);
 	tray.setContextMenu(menu);
 	tray.setToolTip("WhatsApp Electron");
 
 	tray.on("click", (event) => {
 		showHideApp();
 	});
-
-	window.setIcon(nativeImage.createFromBuffer(icon));
 }
 
 const updateTrayCounter = async (counter) => {
-	let   icon  = null;
-	const fsize = counter >= 10 ? "4.5" : "5";
-	const text  = `
-	<svg width="128" height="128" viewBox="0 0 128 128">
-		<circle cx="70%" cy="30%" r="38" stroke="black" stroke-width="1" fill="#f33" />
-		<text x="70%" y="30%" text-anchor="middle" dy="0.35em" fill="#fff" font-size='${fsize}em' font-family="Arial" font-weight="bold">${counter}</text>
-	</svg>
-	`;
+	if (counter == 0)
+	{
+		tray.setImage(baseIcon);
+		return
+	}
 
-	if (counter > 0)
-	{
-		icon = await sharp(baseIcon)
-			.composite([{input: Buffer.from(text), top: 0, left: 0, blend: 'over'}]).png().resize(128, 128).toBuffer();
-	}
-	else
-	{
-		icon = await sharp(baseIcon).png().resize(128, 128).toBuffer();
-	}
-	tray.setImage(nativeImage.createFromBuffer(icon));
+	loadImage(baseIcon).then(image => {
+		const canvas = createCanvas(image.width, image.height)
+		const ctx = canvas.getContext('2d')
+
+		ctx.drawImage(image, 0, 0, image.width, image.height)
+
+		var centerX = canvas.width / 2;
+		var centerY = canvas.height / 2;
+		centerX = centerX + (centerX / 2) - 2;
+		centerY = centerY - (centerY / 2) + 2;
+		var radius = 128;
+
+		ctx.beginPath();
+		ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+		ctx.fillStyle = '#ff3333';
+		ctx.fill();
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = '#003300';
+		ctx.stroke();
+
+		ctx.font = 'bold 200px Arial';
+		ctx.fillStyle = '#ffffff';
+		ctx.fillText(counter, centerX - (counter >= 10 ? 106 : 55), centerY + 70);
+
+		tray.setImage(nativeImage.createFromBuffer(canvas.toBuffer('image/png')));
+	})
 }
 
 app.whenReady().then(() => {
-	createWindow();
 	createTrayIcon();
+	createWindow();
 });
 
 app.on('second-instance', () => {
