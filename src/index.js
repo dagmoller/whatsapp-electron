@@ -42,6 +42,10 @@ const createWindow = () => {
 	}
 
 	window = new BrowserWindow(options);
+	window.webContents.setWindowOpenHandler((details) => {
+		require('electron').shell.openExternal(details.url);
+		return { action: 'deny' };
+	});
 
 	ipcMain.on("update-unread-messages", (event, unread) => {
 		console.log("Unread Messages: ", unread);
