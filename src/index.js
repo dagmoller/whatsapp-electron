@@ -29,7 +29,8 @@ const createWindow = () => {
 		height: bounds.height,
 		webPreferences: {
 			contextIsolation: false,
-			preload: path.join(__dirname, "preload.js")
+			preload: path.join(__dirname, "preload.js"),
+			spellcheck: true
 		},
 		autoHideMenuBar: true,
 		icon: baseIcon
