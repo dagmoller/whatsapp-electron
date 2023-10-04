@@ -145,9 +145,9 @@ const updateTrayCounter = async (counter) => {
 		ctx.strokeStyle = '#003300';
 		ctx.stroke();
 
-		ctx.font = 'bold 200px Arial';
+		ctx.font = 'bold 200px DejaVu Sans Mono';
 		ctx.fillStyle = '#ffffff';
-		ctx.fillText(counter, centerX - (counter >= 10 ? 106 : 55), centerY + 70);
+		ctx.fillText(String(counter), centerX - (counter >= 10 ? 115 : 60), centerY + 70);
 
 		tray.setImage(nativeImage.createFromBuffer(canvas.toBuffer('image/png')));
 	})
