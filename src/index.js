@@ -1,8 +1,8 @@
-const { app, BrowserWindow, ipcMain, Menu, Tray, nativeImage } = require('electron')
+const { app, BrowserWindow, ipcMain, Menu, Tray, nativeImage, Notification } = require('electron')
 const Store = require('electron-store');
 const { createCanvas, loadImage } = require('@napi-rs/canvas')
 const path = require('node:path')
-const isDev = require('electron-is-dev');
+const isDev = require('electron-is-dev')
 
 const store = new Store();
 
@@ -48,12 +48,27 @@ const createWindow = () => {
 	});
 
 	ipcMain.on("update-unread-messages", (event, unread) => {
-		console.log("Unread Messages: ", unread);
+		//console.log("Unread Messages: ", unread);
 		updateTrayCounter(unread);
 	})
 
 	ipcMain.on("notification-clicked", (event, data) => {
 		showHideApp(false);
+	})
+
+	ipcMain.on("new-renderer-notification", (event, data) => {
+		//console.log("New Renderer Notification...", data);
+		const n = new Notification({
+			title: data.title,
+			body:  data.options.body,
+			icon: nativeImage.createFromDataURL(data.icon)
+		});
+		n.on("click", (event) => {
+			//console.log("Notification Clicked...", data.options.tag);
+			showHideApp(false);
+			window.webContents.send("fire-notification-click", data.options.tag);
+		});
+		n.show();
 	})
 
 	saveBounds = () => {
