@@ -24,21 +24,22 @@ class NotificationWrapper extends Notification {
 		try {
 			var unread  = 0;
 			const itens = document.getElementsByTagName("span");
-			for (var i = 0; i < itens.length; i++)
+			for (const item of itens)
 			{
-				if (itens[i].hasAttributes())
+				if (item.hasAttributes())
 				{
-					for (const attr of itens[i].attributes)
+					for (const attr of item.attributes)
 					{
 						if (attr.name == "aria-label" && attr.value == "Não lidas")
-							unread += parseInt(itens[i].innerText);
+							unread += parseInt(item.innerText);
 					}
 				}
 			}
+
 			if (unread != lastUnread)
 			{
-				lastUnread = unread;
 				//console.log("Unread Messages: ", unread);
+				lastUnread = unread;
 				ipcRenderer.send("update-unread-messages", unread);
 			}
 		} catch (e) {
