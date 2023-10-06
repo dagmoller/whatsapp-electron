@@ -1,5 +1,12 @@
 const { ipcRenderer } = require('electron')
 
+// Get my BrowserView ID
+let instance = null;
+ipcRenderer.on("set-instance", (event, data) => {
+    console.log("BrowserView ID/Name:", data);
+    instance = data;
+});
+
 // Helper
 let lastUnread = 0;
 
@@ -51,6 +58,7 @@ window.mRFindModule = (query) => {
 
 // Notification Wrapper
 class NotificationWrapper extends Notification {
+    /*
 	constructor(title, options) {
 		//console.log("NotificationWrapper Called...", title, options);
 		options.icon = options.icon.replace("https://web.whatsapp.com/", "").replace("%3F", "?");
@@ -65,6 +73,7 @@ class NotificationWrapper extends Notification {
 			ipcRenderer.send("notification-clicked", null);
 		});
 	}
+	*/
 
 	static __countUnread() {
 		try {
@@ -86,15 +95,11 @@ class NotificationWrapper extends Notification {
 			{
 				//console.log("Unread Messages: ", unread);
 				lastUnread = unread;
-				ipcRenderer.send("update-unread-messages", unread);
+				ipcRenderer.send("update-unread-messages", {id: instance.id, unread: unread});
 			}
 		} catch (e) {
 			console.error(e)
 		}
-	}
-
-	show(...data) {
-		console.log("show", data);
 	}
 }
 
@@ -110,6 +115,7 @@ class NotificationServer
 	{
 		options.icon = options.icon.replace("https://web.whatsapp.com/", "").replace("%3F", "?");
 		const serverNotification = JSON.parse(JSON.stringify({
+            id: instance.id,
 			title: title,
 			options: options,
 			icon: await this._getIcon(options.icon)
