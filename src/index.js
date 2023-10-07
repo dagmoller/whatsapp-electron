@@ -94,7 +94,7 @@ const createWindow = () => {
 
 		setTimeout(() => {
 			view.setBounds({x: 0, y: 0, width: bounds.width, height: bounds.height - 30});
-		}, 500);
+		}, 1000);
 
 		view.setBackgroundColor('white');
 		view.webContents.loadURL('https://web.whatsapp.com/', { userAgent: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36" });
