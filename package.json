@@ -5,6 +5,7 @@
   "main": "./src/index.js",
   "scripts": {
     "start": "electron ./src",
+    "clean": "rm -rf ./dist",
     "pack": "electron-builder --dir"
   },
   "author": "Diego Aguirre (DagMoller)",
