@@ -35,7 +35,7 @@
       "appId": "WhatsApp Electron",
       "icon": "./assets/whatsapp-icon-512x512.png",
       "target": [
-        "portable"
+        "portable", "zip"
       ],
       "asarUnpack": [
         "**/assets/*.svg",
