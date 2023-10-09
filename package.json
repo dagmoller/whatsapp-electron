@@ -19,8 +19,8 @@
     "dist:windows": "electron-builder --windows --x64"
   },
   "build": {
-    "appId": "com.dagmoller.whatsapp.electron",
     "linux": {
+      "appId": "WhatsApp Electron",
       "icon": "./assets/whatsapp-icon-512x512.png",
       "category": "Network",
       "target": [
@@ -32,9 +32,14 @@
       ]
     },
     "win": {
+      "appId": "WhatsApp Electron",
       "icon": "./assets/whatsapp-icon-512x512.png",
       "target": [
         "portable"
+      ],
+      "asarUnpack": [
+        "**/assets/*.svg",
+        "**/assets/*.png"
       ]
     }
   },

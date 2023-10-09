@@ -236,7 +236,15 @@ class WhatsAppElectron
 
 	setViewBounds(id, bounds = null) {
 		bounds = bounds == null ? this.bounds : bounds;
-		this.instances[id].view.setBounds({x: 0, y: 0, width: bounds.width, height: bounds.height - 25});
+		let woffset = 0;  // Linux
+		let hoffset = 25; // Linux
+		if (process.platform == "win32")
+		{
+			woffset = 15;
+			hoffset = 60;
+		}
+
+		this.instances[id].view.setBounds({x: 0, y: 0, width: bounds.width - woffset, height: bounds.height - hoffset});
 	}
 
 	storeWindowBounds() {
@@ -294,6 +302,9 @@ let Constants = {};
 const ws      = new WhatsAppElectron();
 
 app.whenReady().then(() => {
+	if (process.platform == "win32")
+		app.setAppUserModelId("WhatsApp Electron");
+
 	Constants = require("./constants").init(app.getSystemLocale());
 	ws.init();
 });
