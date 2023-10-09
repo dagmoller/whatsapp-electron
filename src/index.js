@@ -204,6 +204,7 @@ class WhatsAppElectron
 			label: name,
 			type: "radio",
 			checked: false,
+			icon: this.baseIcon,
 			click: () => {
 				this.setCurrentView(id);
 			}
@@ -215,7 +216,7 @@ class WhatsAppElectron
 	}
 
 	setCurrentView(id) {
-		console.log("setCurrentView:", id);
+		//console.log("setCurrentView:", id);
 		const instance = this.instances[id];
 
 		this.window.setTitle(`WhatsApp :: ${instance.name}`);
