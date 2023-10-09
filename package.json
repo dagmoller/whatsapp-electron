@@ -1,26 +1,46 @@
 {
   "name": "whatsapp-electron",
-  "version": "1.0.1",
-  "description": "DagMoller's WhatsApp Electron App",
+  "version": "1.0.2",
+  "description": "DagMoller's WhatsApp Electron Multi-Account App",
+  "author": "Diego Aguirre (DagMoller)",
+  "license": "ISC",
+  "keywords": [
+    "whatsapp",
+    "electron",
+    "multi-account"
+  ],
   "main": "./src/index.js",
   "scripts": {
     "start": "electron ./src",
     "clean": "rm -rf ./dist",
-    "pack": "electron-builder --dir"
-  },
-  "author": "Diego Aguirre (DagMoller)",
-  "license": "ISC",
-  "dependencies": {
-    "electron-is-dev": "^2.0.0",
-    "electron-store": "^8.1.0"
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "dist:linux": "electron-builder --linux --x64",
+    "dist:windows": "electron-builder --windows --x64"
   },
   "build": {
+    "appId": "com.dagmoller.whatsapp.electron",
     "linux": {
+      "icon": "./assets/whatsapp-icon-512x512.png",
+      "category": "Network",
+      "target": [
+        "AppImage", "tar.xz"
+      ],
       "asarUnpack": [
         "**/assets/*.svg",
         "**/assets/*.png"
       ]
+    },
+    "win": {
+      "icon": "./assets/whatsapp-icon-512x512.png",
+      "target": [
+        "portable"
+      ]
     }
+  },
+  "dependencies": {
+    "electron-is-dev": "^2.0.0",
+    "electron-store": "^8.1.0"
   },
   "devDependencies": {
     "electron": "^26.3.0",
