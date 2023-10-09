@@ -199,16 +199,27 @@ class WhatsAppElectron
 		});
 		view.webContents.send(Constants.event.initWhatsAppInstance, {id: id, name: name, constants: Constants});
 
-		this.menuTemplate[0].submenu.push({
+		let menuItem = {
 			id: id,
 			label: name,
 			type: "radio",
 			checked: false,
 			//icon: this.baseIcon,
+			//accelerator: "Alt+<N>"
 			click: () => {
 				this.setCurrentView(id);
 			}
-		});
+		};
+
+		if (this.menuTemplate[0].submenu.length < (10 + 2))
+		{
+			const idx = this.menuTemplate[0].submenu.length - 1
+			if (idx < 10)
+				menuItem.accelerator = `Alt+${idx}`;
+			if (idx == 10)
+				menuItem.accelerator = `Alt+0`;
+		}
+		this.menuTemplate[0].submenu.push(menuItem);
 	}
 
 	setCurrentViewByIdx(idx) {
