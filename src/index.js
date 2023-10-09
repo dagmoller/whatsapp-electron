@@ -204,7 +204,7 @@ class WhatsAppElectron
 			label: name,
 			type: "radio",
 			checked: false,
-			icon: this.baseIcon,
+			//icon: this.baseIcon,
 			click: () => {
 				this.setCurrentView(id);
 			}
