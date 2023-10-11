@@ -40,8 +40,8 @@ const init = (lang) => {
 	switch (process.platform) {
 		case "win32":
 			Constants.offsets.window.y   = -30;
-			Constants.offset.view.width  = -15;
-			Constants.offset.view.height = -60;
+			Constants.offsets.view.width  = -15;
+			Constants.offsets.view.height = -60;
 	}
 
 	return Constants;
