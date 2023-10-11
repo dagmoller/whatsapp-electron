@@ -91,7 +91,7 @@ $(".acct-save").on("click", () => {
 });
 
 $("#acct-delete-button").on("click", (event) => {
-	const acctid = $(this).attr('data-bs-acct-id');
+	const acctid = $("#acct-delete-button").attr('data-bs-acct-id');
 	
 	bootstrap.Modal.getInstance("#deleteModal").hide();
 	window.electron.deleteAccount(acctid);

@@ -1,6 +1,7 @@
 const { app, BrowserWindow, BrowserView, ipcMain, Menu, Tray, nativeImage, Notification, MenuItem, session } = require('electron');
 const Store = require('electron-store');
 const path  = require('node:path');
+const fs    = require('node:fs');
 const isDev = require('electron-is-dev');
 
 // Single Electron Instance
@@ -157,6 +158,7 @@ class WhatsAppElectron
 		});
 		
 		ipcMain.on(Constants.event.reloadWhatsAppInstance, (envet, id) => {
+			console.log("Received reloadWhatsAppInstance...", id);
 			const bv = this.instances[id].view;
 			bv.webContents.reload();
 			setTimeout(() => {
@@ -164,7 +166,8 @@ class WhatsAppElectron
 			}, 1000);
 		});
 		ipcMain.on(Constants.event.clearWorkersAndReload, (envet, id) => {
-			const ses = session.fromPartition(`partition:${id}`);
+			console.log("Received clearWorkersAndReload...", id);
+			const ses = session.fromPartition(`persist:${id}`);
 			ses.flushStorageData();
 			ses.clearStorageData({ storages: ['serviceworkers'] });
 			
@@ -256,6 +259,13 @@ class WhatsAppElectron
 			}
 			this.menu = Menu.buildFromTemplate(this.menuTemplate);
 			Menu.setApplicationMenu(this.menu);
+			
+			// remove storage path
+			const ses = session.fromPartition(`persist:${id}`);
+			ses.clearStorageData().then(() => {
+				const dir = ses.getStoragePath();
+				fs.rmSync(dir, { recursive: true, force: true });
+			});
 			
 			this.window.webContents.send(Constants.event.reloadAccounts);
 		});
