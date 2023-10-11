@@ -1,5 +1,5 @@
  
-const { ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer } = require('electron');
 
 ipcRenderer.on("init-resources", (event, data) => {
 	console.log("Received Constants:", data.constants);
@@ -43,4 +43,14 @@ ipcRenderer.on("init-resources", (event, data) => {
 
 		image.src = "https://raw.githubusercontent.com/dagmoller/whatsapp-electron/main/assets/whatsapp-icon-512x512.png";
 	});
+
+	contextBridge.exposeInMainWorld("electron", {
+		getAccounts: () => ipcRenderer.invoke(Constants.event.getAccountsList).then((accounts) => { return accounts; }),
+		addAccount: (id, name) => ipcRenderer.send(Constants.event.addAccount, {id, name}),
+		updateAccount: (id, name) => ipcRenderer.send(Constants.event.updateAccount, {id, name}),
+		deleteAccount: (id) => ipcRenderer.send(Constants.event.deleteAccount, id),
+		gotoAccount: (id) => ipcRenderer.send(Constants.event.gotoAccount, id),
+		reloadAccounts: (callback) => ipcRenderer.on(Constants.event.reloadAccounts, callback)
+	});
+
 });

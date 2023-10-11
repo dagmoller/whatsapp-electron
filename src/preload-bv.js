@@ -177,5 +177,39 @@ let wa        = null;
 ipcRenderer.on("init-whatsapp-instance", (event, data) => {
 	console.log(`BrowserView ID: ${data.id} / Name: ${data.name}`);
 	Constants = data.constants;
-	wa = new WhatsAppInstance(data.id, data.name);
+	
+	// Check if whatsapp is calling google update
+	const titleEl = document.querySelector('.landing-title');
+	const isUpdate = titleEl && titleEl.innerHTML.includes('Google Chrome');
+	
+	if (isUpdate)
+	{
+		console.warn("Page requested chrome update...");
+		
+		navigator.serviceWorker.getRegistrations().then((regs) => {
+			console.log("Unregistering ServiceWorkers...");
+			
+			for (const reg of regs)
+				reg.unregister();
+				
+			if ('serviceWorker' in navigator) {
+				caches.keys().then(function (cacheNames) {
+					cacheNames.forEach(function (cacheName) {
+						console.log("Clearing Cache Key: ", cacheName);
+						caches.delete(cacheName);
+					});
+				});
+			}
+			
+			console.log("Requesting reload to main process...");
+			setTimeout(() => {
+				ipcRenderer.send(Constants.event.clearWorkersAndReload, data.id);
+			}, 1000);
+		});
+	}
+	else
+	{
+		console.log(`Starting new WhatsAppInstance...`);
+		wa = new WhatsAppInstance(data.id, data.name);
+	}
 });
