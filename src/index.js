@@ -268,8 +268,8 @@ class WhatsAppElectron
 
 	createWindow() {
 		const options = {
-			width: this.bounds.width,
-			height: this.bounds.height,
+			width: this.bounds.width + Constants.offsets.window.width,
+			height: this.bounds.height + Constants.offsets.window.height,
 			icon: this.baseIcon,
 			webSecurity: false,
 			webPreferences: {
@@ -279,8 +279,8 @@ class WhatsAppElectron
 
 		if (this.bounds.x != null)
 		{
-			options.x = this.bounds.x + Constants.offsets.linux.x;
-			options.y = this.bounds.y + Constants.offsets.linux.y;
+			options.x = this.bounds.x + Constants.offsets.window.x;
+			options.y = this.bounds.y + Constants.offsets.window.y;
 		}
 
 		this.window = new BrowserWindow(options);
@@ -378,15 +378,12 @@ class WhatsAppElectron
 
 	setViewBounds(id, bounds = null) {
 		bounds = bounds == null ? this.bounds : bounds;
-		let woffset = 0;  // Linux
-		let hoffset = 25; // Linux
-		if (process.platform == "win32")
-		{
-			woffset = 15;
-			hoffset = 60;
-		}
-
-		this.instances[id].view.setBounds({x: 0, y: 0, width: bounds.width - woffset, height: bounds.height - hoffset});
+		this.instances[id].view.setBounds({
+			x: 0 + Constants.offsets.view.x, 
+			y: 0 + Constants.offsets.view.y, 
+			width: bounds.width + Constants.offsets.view.width, 
+			height: bounds.height + Constants.offsets.view.height
+		});
 	}
 
 	storeWindowBounds() {

@@ -2,10 +2,8 @@
 Constants = {
 	appName : "WhatsApp Electron",
 	offsets : {
-		linux: {
-			x: 0,
-			y: -29
-		}
+		window: { x: 0, y: -29, width: 0, height: 0 }, // Linux
+		view: { x: 0, y: 0, width: 0, height: -25 }     // Linux
 	},
 	event   : {},
 	whatsapp: {}
@@ -37,6 +35,13 @@ const init = (lang) => {
 			Constants.whatsapp.profilePicture = "foto do perfil";
 			Constants.whatsapp.unreadText     = "Não lidas";
 			break;
+	}
+	
+	switch (process.platform) {
+		case "win32":
+			Constants.offsets.window.y   = -30;
+			Constants.offset.view.width  = -15;
+			Constants.offset.view.height = -60;
 	}
 
 	return Constants;
