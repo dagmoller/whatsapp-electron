@@ -389,6 +389,7 @@ class WhatsAppElectron
 		}
 
 		this.setViewBounds(id);
+		instance.view.webContents.focus();
 	}
 
 	setViewBounds(id, bounds = null) {
