@@ -313,6 +313,11 @@ class WhatsAppElectron
 		});
 		
 		this.window.setTitle(`${Constants.appName} :: Accounts`);
+		
+		this.window.on("focus", () => {
+			const bv = this.window.getBrowserView();
+			bv.webContents.focus();
+		});
 	}
 
 	createView(id, name) {
