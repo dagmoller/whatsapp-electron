@@ -1,6 +1,6 @@
 {
   "name": "whatsapp-electron",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "DagMoller's WhatsApp Electron Multi-Account App",
   "author": "Diego Aguirre (DagMoller)",
   "license": "ISC",
@@ -24,7 +24,8 @@
       "icon": "./assets/whatsapp-icon-512x512.png",
       "category": "Network",
       "target": [
-        "AppImage", "tar.xz"
+        "AppImage",
+        "tar.xz"
       ],
       "asarUnpack": [
         "**/assets/*.svg",
@@ -35,7 +36,8 @@
       "appId": "WhatsApp Electron",
       "icon": "./assets/whatsapp-icon-512x512.png",
       "target": [
-        "portable", "zip"
+        "portable",
+        "zip"
       ],
       "asarUnpack": [
         "**/assets/*.svg",
@@ -48,7 +50,7 @@
     "electron-store": "^8.1.0"
   },
   "devDependencies": {
-    "electron": "^26.3.0",
-    "electron-builder": "^24.6.4"
+    "electron": "^27.1.2",
+    "electron-builder": "^24.9.1"
   }
 }

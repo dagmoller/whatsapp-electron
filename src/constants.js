@@ -42,6 +42,7 @@ const init = (lang) => {
 			Constants.offsets.window.y    = -30;
 			Constants.offsets.view.width  = -15;
 			Constants.offsets.view.height = -60;
+			break;
 	}
 
 	return Constants;
