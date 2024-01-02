@@ -54,7 +54,13 @@ class WhatsAppElectron
 				submenu:
 				[
 					{
+						label: "Version undefined by me",
+						enabled: false
+					},
+					{ type: 'separator' },
+					{
 						label: 'Open Development Tool',
+						accelerator: "Ctrl+Shift+I",
 						click: () => {
 							const bv = this.window.getBrowserView();
 							if (bv != null)
@@ -65,6 +71,7 @@ class WhatsAppElectron
 					},
 					{
 						label: "Force Reload (instance)",
+						accelerator: "Ctrl+R",
 						click: () => {
 							const bv = this.window.getBrowserView();
 							if (bv != null)
@@ -111,6 +118,9 @@ class WhatsAppElectron
 
 		for (const item of this.accounts)
 			this.createView(item.id, item.name);
+
+		// set version on menu
+		this.menuTemplate[1].submenu[0].label = `Version ${Constants.version}`;
 
 		this.menu = Menu.buildFromTemplate(this.menuTemplate);
 		Menu.setApplicationMenu(this.menu);
