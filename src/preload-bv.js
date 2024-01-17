@@ -104,7 +104,7 @@ class WhatsAppInstance
 			{
 				for (const attr of item.attributes)
 				{
-					if (attr.name == "aria-label" && attr.value == Constants.whatsapp.unreadText)
+					if (attr.name == "aria-label" && (attr.value == Constants.whatsapp.unreadText || attr.value.search(Constants.whatsapp.unreadTextSearch) != -1))
 						unread += parseInt(item.innerText);
 				}
 			}

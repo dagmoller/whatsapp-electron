@@ -9,7 +9,7 @@ Constants = {
 	whatsapp: {}
 };
 
-Constants.version = "1.1.3";
+Constants.version = "1.1.4";
 
 Constants.whatsapp.url       = "https://web.whatsapp.com/";
 Constants.whatsapp.userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
@@ -34,8 +34,9 @@ Constants.event.reloadAccounts          = "reload-accounts";
 const init = (lang) => {
 	switch (lang) {
 		case "pt-BR":
-			Constants.whatsapp.profilePicture = "foto do perfil";
-			Constants.whatsapp.unreadText     = "Não lidas";
+			Constants.whatsapp.profilePicture   = "foto do perfil";
+			Constants.whatsapp.unreadText       = "Não lidas";
+			Constants.whatsapp.unreadTextSearch = /[0-9]+ mensage(m|ns)? não lida(s)?/;
 			break;
 	}
 	
