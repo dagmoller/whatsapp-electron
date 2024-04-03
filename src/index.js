@@ -352,7 +352,11 @@ class WhatsAppElectron
 			require('electron').shell.openExternal(details.url);
 			return { action: 'deny' };
 		});
-		view.webContents.send(Constants.event.initWhatsAppInstance, {id: id, name: name, constants: Constants});
+		
+		setTimeout(function () {
+			view.webContents.send(Constants.event.initWhatsAppInstance, {id: id, name: name, constants: Constants});
+		}, 500);
+		//view.webContents.send(Constants.event.initWhatsAppInstance, {id: id, name: name, constants: Constants});
 
 		let menuItem = {
 			id: id,

@@ -23,7 +23,7 @@ class WhatsAppInstance
 			mutations.forEach((mutation) => {
 				this.countUnread();
 
-				if (this.mrctl == null && mutation.target.ariaLabel == Constants.whatsapp.profilePicture)
+				if (this.mrid == null && mutation.target.ariaLabel == Constants.whatsapp.profilePicture)
 					this.loadModuleRaid();
 			});
 		});
@@ -50,14 +50,36 @@ class WhatsAppInstance
 
 	loadModuleRaid() {
 		console.log("Loading Module Raid...");
-		this.mrctl = Math.random().toString(36).substring(7);
-		window.webpackChunkwhatsapp_web_client.push([
-			[this.mrid], {}, (e) => {
-				Object.keys(e.m).forEach((mod) => {
-					this.mrobj[mod] = e(mod);
-				})
-			}
-		]);
+		this.mrid = Math.random().toString(36).substring(7);
+		
+		if (parseFloat(window.Debug.VERSION) < 2.3) {
+			window.webpackChunkwhatsapp_web_client.push([
+				[this.mrid], {}, (e) => {
+					Object.keys(e.m).forEach((mod) => {
+						this.mrobj[mod] = e(mod);
+					})
+				}
+			]);
+		} else {
+			var _wai = this;
+			let modules = self.require('__debug').modulesMap;
+			Object.keys(modules).filter(e => e.includes("WA")).forEach(function (mod) {
+				let modulos = modules[mod];
+				if (modulos) {
+					_wai.mrobj[mod] = {
+						default: modulos.defaultExport,
+						factory: modulos.factory,
+						...modulos
+					};
+					if (Object.keys(_wai.mrobj[mod].default).length == 0) {
+						try {
+							self.ErrorGuard.skipGuardGlobal(true);
+							Object.assign(_wai.mrobj[mod], self.importNamespace(mod));
+						} catch (e) {}
+					}
+				}
+			});
+		}
 	}
 
 	findModule(query) {
