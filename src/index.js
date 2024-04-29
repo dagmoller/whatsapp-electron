@@ -355,7 +355,7 @@ class WhatsAppElectron
 		
 		setTimeout(function () {
 			view.webContents.send(Constants.event.initWhatsAppInstance, {id: id, name: name, constants: Constants});
-		}, 500);
+		}, 2000);
 		//view.webContents.send(Constants.event.initWhatsAppInstance, {id: id, name: name, constants: Constants});
 
 		let menuItem = {

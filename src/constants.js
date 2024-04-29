@@ -2,8 +2,9 @@
 Constants = {
 	appName : "WhatsApp Electron",
 	offsets : {
-		window: { x: 0, y: -29, width: 0, height: 0 }, // Linux
-		view: { x: 0, y: 0, width: 0, height: -25 }     // Linux
+		//window: { x: 0, y: -29, width: 0, height: 0 }, // Linux
+		window: { x: 0, y: 0, width: 0, height: 0 }, // Linux
+		view: { x: 0, y: 0, width: 0, height: -25 }    // Linux
 	},
 	event   : {},
 	whatsapp: {}
