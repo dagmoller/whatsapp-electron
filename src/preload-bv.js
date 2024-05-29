@@ -23,8 +23,14 @@ class WhatsAppInstance
 			mutations.forEach((mutation) => {
 				this.countUnread();
 
-				if (this.mrid == null && mutation.target.ariaLabel == Constants.whatsapp.profilePicture)
-					this.loadModuleRaid();
+				if (this.mrid == null)
+				{
+					if (typeof mutation.target.ariaLabel === 'string')
+					{
+						if (mutation.target.ariaLabel.search(Constants.whatsapp.profilePicture) != -1)
+							this.loadModuleRaid();
+					}
+				}
 			});
 		});
 
@@ -239,5 +245,6 @@ ipcRenderer.on("init-whatsapp-instance", (event, data) => {
 	{
 		console.log(`Starting new WhatsAppInstance...`);
 		wa = new WhatsAppInstance(data.id, data.name);
+		window.wa = wa;
 	}
 });

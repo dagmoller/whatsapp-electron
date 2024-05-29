@@ -34,7 +34,7 @@ Constants.event.reloadAccounts          = "reload-accounts";
 const init = (lang) => {
 	switch (lang) {
 		case "pt-BR":
-			Constants.whatsapp.profilePicture   = "foto do perfil";
+			Constants.whatsapp.profilePicture   = /foto do perfil|conversas/i;
 			Constants.whatsapp.unreadText       = "Não lidas";
 			Constants.whatsapp.unreadTextSearch = /[0-9]+ mensage(m|ns)? não lida(s)?/;
 			break;
