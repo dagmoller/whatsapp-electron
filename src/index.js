@@ -2,7 +2,6 @@ const { app, BrowserWindow, BrowserView, ipcMain, Menu, Tray, nativeImage, Notif
 const Store = require('electron-store');
 const path  = require('node:path');
 const fs    = require('node:fs');
-const isDev = require('electron-is-dev');
 
 // Single Electron Instance
 if (!app.requestSingleInstanceLock()) {
@@ -14,7 +13,7 @@ class WhatsAppElectron
 {
 	constructor() {
 		this.store    = new Store();
-		this.baseIcon = isDev ? path.join(__dirname, "../assets/whatsapp-icon-512x512.png") : path.join(process.resourcesPath, "app.asar.unpacked/assets/whatsapp-icon-512x512.png");
+		this.baseIcon = !app.isPackaged ? path.join(__dirname, "../assets/whatsapp-icon-512x512.png") : path.join(process.resourcesPath, "app.asar.unpacked/assets/whatsapp-icon-512x512.png");
 		this.isQuit   = false;
 
 		this.bounds = this.store.get("bounds");
@@ -304,7 +303,7 @@ class WhatsAppElectron
 		}
 
 		this.window = new BrowserWindow(options);
-		this.window.loadFile(isDev ? "index-bw.html" : "./src/index-bw.html");
+		this.window.loadFile(!app.isPackaged ? "index-bw.html" : "./src/index-bw.html");
 
 		this.window.webContents.send(Constants.event.initResources, {constants: Constants});
 

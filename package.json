@@ -46,7 +46,6 @@
     }
   },
   "dependencies": {
-    "electron-is-dev": "^3.0.1",
     "electron-store": "^8.2.0"
   },
   "devDependencies": {
