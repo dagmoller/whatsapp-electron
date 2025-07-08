@@ -46,11 +46,11 @@
     }
   },
   "dependencies": {
-    "electron-is-dev": "^2.0.0",
+    "electron-is-dev": "^3.0.1",
     "electron-store": "^8.2.0"
   },
   "devDependencies": {
-    "electron": "^29.3.1",
-    "electron-builder": "^24.13.3"
+    "electron": "^37.2.0",
+    "electron-builder": "^26.0.12"
   }
 }
