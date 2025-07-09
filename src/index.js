@@ -1,4 +1,4 @@
-const { app, BrowserWindow, BrowserView, ipcMain, Menu, Tray, nativeImage, Notification, MenuItem, session } = require('electron');
+const { app, BrowserWindow, WebContentsView, ipcMain, Menu, Tray, nativeImage, Notification, MenuItem, session } = require('electron');
 const Store = require('electron-store');
 const path  = require('node:path');
 const fs    = require('node:fs');
@@ -40,9 +40,7 @@ class WhatsAppElectron
 						enabled: true,
 						accelerator: "Alt+a",
 						click: () => {
-							const view = this.window.getBrowserView();
-							if (view != null)
-								this.window.removeBrowserView(view);
+							this.removeViews();
 							this.window.setTitle(`${Constants.appName} :: Accounts`);
 						}
 					}
@@ -61,9 +59,9 @@ class WhatsAppElectron
 						label: 'Open Development Tool',
 						accelerator: "Ctrl+Shift+I",
 						click: () => {
-							const bv = this.window.getBrowserView();
-							if (bv != null)
-								bv.webContents.openDevTools();
+							const views = this.window.contentView.children;
+							if (views.length > 0)
+								views[views.length - 1].webContents.openDevTools();
 							else
 								this.window.webContents.openDevTools();
 						}
@@ -72,13 +70,13 @@ class WhatsAppElectron
 						label: "Force Reload (instance)",
 						accelerator: "Ctrl+R",
 						click: () => {
-							const bv = this.window.getBrowserView();
-							if (bv != null)
+							const views = this.window.contentView.children;
+							if (views.length > 0)
 							{
-								bv.webContents.reload();
-								//bv.webContents.loadURL(Constants.whatsapp.url, { userAgent: Constants.whatsapp.userAgent });
+								const view = views[views.length - 1];
+								view.webContents.reload();
 								setTimeout(() => {
-									bv.webContents.send(Constants.event.initWhatsAppInstance, {id: bv._id, name: bv._name, constants: Constants});
+									view.webContents.send(Constants.event.initWhatsAppInstance, {id: view._id, name: view._name, constants: Constants});
 								}, 1000);
 							}
 							else
@@ -324,15 +322,16 @@ class WhatsAppElectron
 		this.window.setTitle(`${Constants.appName} :: Accounts`);
 		
 		this.window.on("focus", () => {
-			const bv = this.window.getBrowserView();
-			bv.webContents.focus();
+			const views = this.window.contentView.children;
+			if (views.length > 0)
+				views[views.length - 1].webContents.focus();
 		});
 	}
 
 	createView(id, name) {
 		this.instances[id] = {id: id, name: name, unread: 0, view: null};
 
-		const view = new BrowserView({
+		const view = new WebContentsView({
 			webPreferences: {
 				partition: `persist:${id}`,
 				preload: path.join(__dirname, "preload-bv.js"),
@@ -390,7 +389,7 @@ class WhatsAppElectron
 		const instance = this.instances[id];
 
 		this.window.setTitle(`${Constants.appName} :: ${instance.name}`);
-		this.window.setBrowserView(instance.view);
+		this.replaceView(instance.view);
 
 		if (this.menu != undefined)
 		{
@@ -413,6 +412,16 @@ class WhatsAppElectron
 			width: bounds.width + Constants.offsets.view.width, 
 			height: bounds.height + Constants.offsets.view.height
 		});
+	}
+
+	removeViews() {
+		const views = this.window.contentView.children;
+		for (const view of views)
+			this.window.contentView.removeChildView(view);
+	}
+	replaceView(view) {
+		this.removeViews();
+		this.window.contentView.addChildView(view);
 	}
 
 	storeWindowBounds() {
