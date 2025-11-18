@@ -120,7 +120,7 @@ class WhatsAppInstance
 	async openChat (tag) {
 		//console.log("openChat tag", tag);
 
-		let chatWid = await this.findModule('createWid')[0].createWid(tag);
+		let chatWid = this.findModule('createWid')[0].createWid(tag);
 		//console.log("openChat chatWid", chatWid);
 
 		let chat    = await this.findModule(m => m.default && m.default.Chat)[0].default.Chat.find(chatWid);
