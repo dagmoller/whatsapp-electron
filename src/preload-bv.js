@@ -118,9 +118,22 @@ class WhatsAppInstance
 	}
 
 	async openChat (tag) {
-		let chatWid = this.findModule('createWid')[0].createWid(tag);
+		//console.log("openChat tag", tag);
+
+		let chatWid = await this.findModule('createWid')[0].createWid(tag);
+		//console.log("openChat chatWid", chatWid);
+
 		let chat    = await this.findModule(m => m.default && m.default.Chat)[0].default.Chat.find(chatWid);
-		await this.findModule("Cmd")[0].Cmd.openChatBottom(chat);
+		//console.log("openChat chat", chat);
+
+		/* To Debug on Browser
+		let chatWid = wa.findModule('createWid')[0].createWid(tag);
+		let chat    = await wa.findModule(m => m.default && m.default.Chat)[0].default.Chat.find(chatWid);
+		await wa.findModule("Cmd")[0].Cmd.openChatBottom(chat);
+		*/
+
+		//await this.findModule("Cmd")[0].Cmd.openChatBottom(chat);
+		await this.findModule("Cmd")[0].Cmd.openChatBottom({chat: chat});
 	}
 
 	countUnread() {
