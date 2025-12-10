@@ -1,5 +1,6 @@
 {
   "name": "whatsapp-electron",
+  "desktopName": "com.github.dagmoller.whatsapp-electron",
   "version": "1.2.5",
   "description": "DagMoller's WhatsApp Electron Multi-Account App",
   "author": "Diego Aguirre (DagMoller)",
