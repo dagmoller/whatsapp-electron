@@ -488,5 +488,6 @@ app.on('second-instance', () => {
 });
 
 app.on('window-all-closed', () => {
-	app.quit()
+	if (ws.isQuit)
+		app.quit();
 });
