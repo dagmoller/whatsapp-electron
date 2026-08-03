@@ -381,7 +381,7 @@ class WhatsAppElectron
 				partition: `persist:${id}`,
 				preload: path.join(__dirname, "whatsapp-preload.js"),
 				spellcheck: true,
-				contextIsolation: false
+				contextIsolation: true
 			}
 		});
 		this.instances[id].view = view;
