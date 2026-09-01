@@ -381,6 +381,7 @@ class WhatsAppElectron
 			}
 
 			e.preventDefault();
+			this.closeCurrentChats();
 			this.window.hide();
 		});
 		
@@ -561,8 +562,17 @@ class WhatsAppElectron
 		{
 			if (hide)
 			{
+				this.closeCurrentChats();
 				this.window.hide();
 			}
+		}
+	}
+
+	closeCurrentChats() {
+		// send ESC key event to close current chats
+		for (const id in this.instances) {
+			this.instances[id].view.webContents.sendInputEvent({type: "keyDown", keyCode: "Escape"});
+			this.instances[id].view.webContents.sendInputEvent({type: "keyUp", keyCode: "Escape"});
 		}
 	}
 }
