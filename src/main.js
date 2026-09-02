@@ -105,7 +105,8 @@ class WhatsAppElectron
 						label: "Quit",
 						click: () => {
 							this.isQuit = true;
-							app.quit();
+							//app.quit();
+							this.quit();
 						}
 					}
 				]
@@ -154,7 +155,7 @@ class WhatsAppElectron
 		const menu = Menu.buildFromTemplate([
 			{label: "Show/Hide", click: () => { this.showHide(); }},
 			{type: "separator"},
-			{label: "Quit", click: () => { this.isQuit = true; app.quit(); }}
+			{label: "Quit", click: () => { this.isQuit = true; this.quit(); }}
 		]);
 
 		this.tray = new Tray(this.baseIcon);
@@ -343,6 +344,21 @@ class WhatsAppElectron
 		});
 	}
 
+	quit() {
+		for (const id in this.instances)
+		{
+			const name = this.instances[id].name;
+			this.instances[id].view.webContents.session.clearCache()
+				.then(() => {
+					console.log(`WhatsApp Electron: Cleared cache for instance "${name} (${id})"`);
+				})
+				.catch((err) => {
+					console.error(`WhatsApp Electron: Failed to clear cache for instance "${name} (${id})":`, err);
+				});
+		}
+		app.quit();
+	}
+
 	createWindow() {
 		const options = {
 			width: this.bounds.width + Constants.offsets.window.width,
@@ -376,7 +392,8 @@ class WhatsAppElectron
 		this.window.on("close", (e) => {
 			if (this.isQuit)
 			{
-				app.quit();
+				//app.quit();
+				this.quit();
 				return;
 			}
 
@@ -591,5 +608,5 @@ app.on('second-instance', () => {
 
 app.on('window-all-closed', () => {
 	if (ws.isQuit)
-		app.quit();
+		ws.quit();
 });
