@@ -345,18 +345,21 @@ class WhatsAppElectron
 	}
 
 	quit() {
-		for (const id in this.instances)
-		{
-			const name = this.instances[id].name;
-			this.instances[id].view.webContents.session.clearCache()
+		if (this.isQuitting)
+			return;
+
+		this.isQuitting = true;
+		const cacheClears = Object.entries(this.instances).map(([id, instance]) => {
+			return instance.view.webContents.session.clearCache()
 				.then(() => {
-					console.log(`WhatsApp Electron: Cleared cache for instance "${name} (${id})"`);
+					console.log(`WhatsApp Electron: Cleared cache for instance "${instance.name} (${id})"`);
 				})
 				.catch((err) => {
-					console.error(`WhatsApp Electron: Failed to clear cache for instance "${name} (${id})":`, err);
+					console.error(`WhatsApp Electron: Failed to clear cache for instance "${instance.name} (${id})":`, err);
 				});
-		}
-		app.quit();
+		});
+
+		Promise.allSettled(cacheClears).then(() => app.quit());
 	}
 
 	createWindow() {
