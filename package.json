@@ -56,7 +56,10 @@
     ]
   },
   "dependencies": {
-    "electron-store": "^11.0.2"
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
+    "electron-store": "^11.0.2",
+    "jquery": "^4.0.0"
   },
   "devDependencies": {
     "electron": "^42.9.3",

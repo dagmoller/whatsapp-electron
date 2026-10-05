@@ -1,4 +1,4 @@
-const { app, BrowserWindow, WebContentsView, ipcMain, Menu, Tray, nativeImage, Notification, MenuItem, desktopCapturer, session } = require('electron');
+const { app, BrowserWindow, WebContentsView, ipcMain, Menu, Tray, nativeImage, Notification, MenuItem, desktopCapturer, session, net } = require('electron');
 const Store = require('electron-store').default;
 const path  = require('node:path');
 const fs    = require('node:fs');
@@ -445,7 +445,7 @@ class WhatsAppElectron
 		view._name = name;
 
 		view.setBackgroundColor('white');
-		view.webContents.loadURL(Constants.whatsapp.url, { userAgent: Constants.whatsapp.userAgent });
+		// set up window open handler
 		view.webContents.setWindowOpenHandler((details) => {
 			const url = new URL(details.url);
 			if (url.hostname == "web.whatsapp.com" || url.hostname.endsWith(".whatsapp.com"))
@@ -463,11 +463,26 @@ class WhatsAppElectron
 			return { action: 'deny' };
 		});
 		
-		// init whatsapp instance afeter load finished
-		view.webContents.on("did-finish-load", () => {
-			console.log(`WhatsApp Electron: WebContentsView Instance for "${name} (${id})" has finished loading, initializing it...`);
-			view.webContents.send(Constants.event.initWhatsAppInstance, {id: id, name: name, constants: Constants});
-		});
+		let tt = null;
+		async function loadWhatsApp(timeout = 2500) {
+			try {
+				// init whatsapp instance after load finished
+				view.webContents.on("did-finish-load", () => {
+					console.log(`WhatsApp Electron: WebContentsView Instance for "${name} (${id})" has finished loading, initializing it...`);
+					view.webContents.send(Constants.event.initWhatsAppInstance, {id: id, name: name, constants: Constants});
+				});
+				await Promise.race([
+					view.webContents.loadURL(Constants.whatsapp.url, { userAgent: Constants.whatsapp.userAgent }),
+					new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), timeout))
+				]);
+			} catch (e) {
+				console.error(e);
+				view.webContents.removeAllListeners('did-finish-load');
+				view.webContents.loadFile("./src/offline.html");
+				tt = setTimeout(loadWhatsApp, 2500);
+			}
+		};
+		loadWhatsApp();
 		
 		let menuItem = {
 			id: id,
