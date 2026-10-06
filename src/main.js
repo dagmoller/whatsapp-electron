@@ -462,27 +462,39 @@ class WhatsAppElectron
 			require('electron').shell.openExternal(details.url);
 			return { action: 'deny' };
 		});
-		
-		let tt = null;
-		async function loadWhatsApp(timeout = 2500) {
-			try {
-				// init whatsapp instance after load finished
-				view.webContents.on("did-finish-load", () => {
-					console.log(`WhatsApp Electron: WebContentsView Instance for "${name} (${id})" has finished loading, initializing it...`);
-					view.webContents.send(Constants.event.initWhatsAppInstance, {id: id, name: name, constants: Constants});
-				});
-				await Promise.race([
-					view.webContents.loadURL(Constants.whatsapp.url, { userAgent: Constants.whatsapp.userAgent }),
-					new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), timeout))
-				]);
-			} catch (e) {
-				console.error(e);
-				view.webContents.removeAllListeners('did-finish-load');
-				view.webContents.loadFile("./src/offline.html");
-				tt = setTimeout(loadWhatsApp, 2500);
-			}
+
+		const hasConnection = (timeout = 5000) => {
+			return new Promise((resolve) => {
+				if (!net.isOnline())
+					return resolve(false);
+
+				const request = net.request({ method: 'HEAD', url: Constants.whatsapp.url });
+				const timer   = setTimeout(() => { request.abort(); resolve(false); }, timeout);
+
+				request.on("response", () => {clearTimeout(timer); resolve(true);});
+				request.on("error", () => {clearTimeout(timer); resolve(false);});
+				request.end();
+			});
 		};
-		loadWhatsApp();
+
+		const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+		async function waitForConnection(interval = 5000) {
+			if (!(await hasConnection())) {
+				view.webContents.loadFile("./src/offline.html");
+			}
+			while (!(await hasConnection())) {
+				console.log("WhatsApp Electron: No internet connection, retrying...");
+				await sleep(interval);
+			}
+
+			view.webContents.on("did-finish-load", () => {
+				console.log(`WhatsApp Electron: WebContentsView Instance for "${name} (${id})" has finished loading, initializing it...`);
+				view.webContents.send(Constants.event.initWhatsAppInstance, {id: id, name: name, constants: Constants});
+			});
+			view.webContents.loadURL(Constants.whatsapp.url, { userAgent: Constants.whatsapp.userAgent });
+		};
+		waitForConnection();
 		
 		let menuItem = {
 			id: id,
