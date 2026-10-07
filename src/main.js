@@ -105,7 +105,6 @@ class WhatsAppElectron
 						label: "Quit",
 						click: () => {
 							this.isQuit = true;
-							//app.quit();
 							this.quit();
 						}
 					}
@@ -395,7 +394,6 @@ class WhatsAppElectron
 		this.window.on("close", (e) => {
 			if (this.isQuit)
 			{
-				//app.quit();
 				this.quit();
 				return;
 			}
@@ -479,7 +477,7 @@ class WhatsAppElectron
 
 		const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-		async function waitForConnection(interval = 5000) {
+		async function waitForConnection(interval = 2500) {
 			if (!(await hasConnection())) {
 				view.webContents.loadFile("./src/offline.html");
 			}
@@ -565,6 +563,10 @@ class WhatsAppElectron
 	}
 
 	storeWindowBounds() {
+		const bounds = this.window.getBounds();
+		if (bounds.width == 0 || bounds.height == 0)
+			return;
+
 		this.bounds = this.window.getBounds();
 		this.store.set("bounds", this.bounds);
 
@@ -639,4 +641,8 @@ app.on('second-instance', () => {
 app.on('window-all-closed', () => {
 	if (ws.isQuit)
 		ws.quit();
+});
+
+app.on('before-quit', () => {
+	ws.isQuit = true;
 });
