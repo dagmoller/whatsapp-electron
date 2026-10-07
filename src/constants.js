@@ -9,7 +9,7 @@ Constants = {
 	whatsapp: {}
 };
 
-Constants.version = "1.2.12";
+Constants.version = "1.2.13";
 
 Constants.whatsapp.url       = "https://web.whatsapp.com/";
 Constants.whatsapp.userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36";
